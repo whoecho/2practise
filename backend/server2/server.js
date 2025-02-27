@@ -23,7 +23,7 @@ const swaggerOptions = {
       description: "API для управления товарами в интернет-магазине",
     },
   },
-  apis: ["./server.js"], // 📌 Файл, в котором описаны API
+  apis: ["./backend/server2/server.js"],
 };
 
 // 🔹 Инициализация Swagger
