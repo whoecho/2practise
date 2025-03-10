@@ -1,18 +1,33 @@
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "http://localhost:4000/graphql",
+  cache: new InMemoryCache(),
+});
+
 window.onload = function () {
-  fetch("http://localhost:8080/api/products")
-    .then((response) => response.json())
-    .then((data) => {
+  client
+    .query({
+      query: gql`
+        {
+          products {
+            name
+            price
+          }
+        }
+      `,
+    })
+    .then((result) => {
       const catalog = document.getElementById("catalog");
-      data.forEach((product) => {
+      result.data.products.forEach((product) => {
         const card = document.createElement("div");
         card.classList.add("product-card");
         card.innerHTML = `
-            <h2>${product.name}</h2>
-            <p>${product.price} USD</p>
-            <p>${product.description}</p>
-            <p>Categories: ${product.categories.join(", ")}</p>
-          `;
+          <h2>${product.name}</h2>
+          <p>${product.price} USD</p>
+        `;
         catalog.appendChild(card);
       });
-    });
+    })
+    .catch((error) => console.error("Ошибка при получении данных:", error));
 };

@@ -48,5 +48,14 @@
       "dasda",
       "isa"
     ]
+  },
+  {
+    "id": "1",
+    "name": "adsadsdsa",
+    "price": 2,
+    "description": "asdasdsa",
+    "categories": [
+      "asdasddsa"
+    ]
   }
 ]

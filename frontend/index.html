@@ -34,7 +34,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
+
         align-items: center;
         justify-content: center;
       }
@@ -54,7 +54,61 @@
 
     <button onclick="getProducts()">Получить список товаров</button>
     <div id="product-list"></div>
+    <input type="text" id="chat-input" placeholder="Введите сообщение..." />
+    <button onclick="sendMessage()">Отправить</button>
+    <label>
+      <input type="checkbox" id="admin-mode" /> Отправить как администратор
+    </label>
 
+    <script>
+      const ws = new WebSocket("ws://localhost:5001");
+
+      ws.onmessage = async (event) => {
+        const chatBox = document.getElementById("chat-box");
+
+        let text = event.data;
+        if (event.data instanceof Blob) {
+          text = await event.data.text();
+        }
+
+        // Parsing JSON message from the server
+        try {
+          const message = JSON.parse(text);
+          console.log(message);
+          const sender = message.admin ? "🛠️ [Админ]" : "👤 [Клиент]";
+          chatBox.innerHTML += `<p><strong>${sender}:</strong> ${message.text}</p>`;
+        } catch (error) {
+          console.error("Ошибка обработки сообщения:", error);
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+      };
+
+      function sendMessage() {
+        const input = document.getElementById("chat-input");
+        const input2 = document.getElementById("chat-input2");
+        const isAdmin = document.getElementById("admin-mode").checked;
+
+        if (input.value.trim()) {
+          const message = {
+            text: input.value,
+            admin: true,
+          };
+          console.log("Admin");
+          ws.send(JSON.stringify(message));
+          input.value = "";
+        }
+        if (input2.value.trim()) {
+          const message = {
+            text: input2.value,
+            admin: false,
+          };
+          ws.send(JSON.stringify(message));
+
+          input2.value = "";
+        }
+      }
+    </script>
     <hr />
 
     <h3>Добавить товар</h3>
@@ -104,6 +158,8 @@
       let productIdToDelete = null;
 
       function openDeleteModal() {
+        console.log("ASd");
+
         productIdToDelete = document.getElementById("delete-id").value;
         document.getElementById("delete-modal").style.display = "flex";
       }
@@ -201,5 +257,18 @@
           );
       }
     </script>
+    <hr />
+    <h3>Чат поддержки</h3>
+    <div
+      id="chat-box"
+      style="
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+      "
+    ></div>
+    <input type="text" id="chat-input2" placeholder="Введите сообщение..." />
+    <button onclick="sendMessage()">Отправить</button>
   </body>
 </html>
