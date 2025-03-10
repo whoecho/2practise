@@ -1,5 +1,6 @@
 ```
 npm i
-node backend/server1/server.js
-node backend/server2/server.js
+node backend/graphqlServer.js
+node backend/websocketServer.js
+node backend/server2.js
 ```
